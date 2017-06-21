@@ -21,6 +21,8 @@ test_docker:
     - docker:dind
   script:
     - docker info
+  variables:
+    DOCKER_HOST: tcp://localhost:2375
   
 npm_install:
   stage: dependencies
