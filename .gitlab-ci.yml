@@ -41,7 +41,7 @@ test:
   stage: test
   script:
     - npm test
-  coverage: ^All files *\|[^|]*\|[^|]*\|[^|]*\| *(\d+.\d+)|
+  coverage: /^All files *\|[^|]*\|[^|]*\|[^|]*\| *(\d+.\d+)|/
   artifacts:
     paths:
       - coverage/
