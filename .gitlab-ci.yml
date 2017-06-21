@@ -29,6 +29,7 @@ docker_test:
     - docker info
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
   script:
+    - mkdir build
     - docker build -t gitlab-registry.kubernetes.knmi.nl/matser/demo-frontend/image:latest .
     - docker push gitlab-registry.kubernetes.knmi.nl/matser/demo-frontend/image:latest
 
