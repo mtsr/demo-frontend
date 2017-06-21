@@ -11,8 +11,9 @@ services:
 
 stages:
   - dependencies
-  - test
   - build
+  - test
+  - docker
   - deploy
   
 npm_install:
@@ -28,7 +29,7 @@ npm_install:
       - node_modules/
     expire_in: 20 minutes
 
-compile:
+npm_build:
   stage: build
   dependencies:
     - npm_install
@@ -54,9 +55,9 @@ variables:
   CONTAINER_RELEASE_IMAGE: registry.example.com/my-group/my-project/my-image:latest
   
 docker_build:
-  stage: build
+  stage: docker
   dependencies:
-    - compile
+    - npm_build
   before_script:
     - docker info
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
@@ -64,10 +65,10 @@ docker_build:
     - docker build -t $CONTAINER_TEST_IMAGE .
     - docker push $CONTAINER_TEST_IMAGE
 
-deploy-staging:
+deploy_staging:
   stage: deploy
   dependencies:
-    - compile
+    - npm_build
   script:
     - find build
    
