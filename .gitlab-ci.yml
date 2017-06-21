@@ -13,25 +13,11 @@ variables:
 # Only needed when using a docker container to run your tests in.
 # Check out: http://docs.gitlab.com/ce/ci/docker/using_docker_images.html#what-is-service
 stages:
-  - docker_test
   - dependencies
   - build
   - test
   - docker
   - deploy
-
-docker_test:
-  stage: docker_test
-  image: docker:latest
-  services:
-    - jonasknmi/dind-options:latest
-  before_script:
-    - docker info
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
-  script:
-    - mkdir build
-    - docker build -t $CONTAINER_TEST_IMAGE .
-    - docker push $CONTAINER_TEST_IMAGE
 
 npm_install:
   stage: dependencies
@@ -71,7 +57,7 @@ docker_build:
   stage: docker
   image: docker:latest
   services:
-    - docker:dind
+    - jonasknmi/dind-options:latest
   dependencies:
     - npm_build
   before_script:
