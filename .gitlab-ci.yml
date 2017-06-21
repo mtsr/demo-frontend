@@ -28,17 +28,25 @@ npm_install:
   script:
     - npm install yarn
     - yarn install
+  artifacts:
+    paths:
+      - node_modules/
+    expire_in: 20 minutes
 
-build:
+compile:
   stage: build
+  dependencies:
+    - npm_install
   script:
     - npm run build
   artifacts:
     paths:
       - dist/
    
-test:
+run_test:
   stage: test
+  dependencies:
+    - npm_install
   script:
     - npm test
   coverage: /^All files *\|[^|]*\|[^|]*\|[^|]*\| *(\d+.\d+)|/
@@ -47,16 +55,16 @@ test:
       - coverage/
 
 deploy:
-  dependencies:
-    - build
   stage: deploy
+  dependencies:
+    - compile
   script:
     - find build
    
 pages:
   stage: deploy
   dependencies:
-    - test
+    - run_test
   script:
     - mv coverage/lcov-report public/
   artifacts:
