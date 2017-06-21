@@ -40,7 +40,7 @@ compile:
     - npm run build
   artifacts:
     paths:
-      - dist/
+      - build/
    
 run_test:
   stage: test
