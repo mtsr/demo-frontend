@@ -50,14 +50,13 @@ run_test:
 variables:
   CONTAINER_TEST_IMAGE: registry.kubernetes.knmi.nl/matser/demo-frontend/demo-frontend:$CI_COMMIT_REF_NAME
   CONTAINER_RELEASE_IMAGE: registry.example.com/my-group/my-project/my-image:latest
+  DOCKER_HOST: tcp://localhost:2375
   
 docker_build:
   stage: docker
   image: docker:latest
   services:
     - docker:dind
-  variables:
-    DOCKER_HOST: tcp://localhost:2375
   dependencies:
     - npm_build
   before_script:
