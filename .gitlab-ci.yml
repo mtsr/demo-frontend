@@ -21,7 +21,7 @@ stages:
   - deploy
 
 docker_test:
-  stage: docker-test
+  stage: docker_test
   image: docker:latest
   services:
     - jonasknmi/dind-options:latest
