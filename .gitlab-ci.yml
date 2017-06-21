@@ -7,23 +7,12 @@ image: node:6
 # Only needed when using a docker container to run your tests in.
 # Check out: http://docs.gitlab.com/ce/ci/docker/using_docker_images.html#what-is-service
 stages:
-  - test_docker
   - dependencies
   - build
   - test
   - docker
   - deploy
 
-test_docker:
-  stage: test_docker
-  image: docker:latest
-  services:
-    - docker:dind
-  script:
-    - docker info
-  variables:
-    DOCKER_HOST: tcp://localhost:2375
-  
 npm_install:
   stage: dependencies
   cache:
@@ -67,6 +56,8 @@ docker_build:
   image: docker:latest
   services:
     - docker:dind
+  variables:
+    DOCKER_HOST: tcp://localhost:2375
   dependencies:
     - npm_build
   before_script:
