@@ -55,6 +55,7 @@ variables:
   CONTAINER_RELEASE_IMAGE: registry.example.com/my-group/my-project/my-image:latest
   
 docker_build:
+  image: docker:latest
   stage: docker
   dependencies:
     - npm_build
