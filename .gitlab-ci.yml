@@ -6,9 +6,6 @@ image: node:6
 # Pick zero or more services to be used on all builds.
 # Only needed when using a docker container to run your tests in.
 # Check out: http://docs.gitlab.com/ce/ci/docker/using_docker_images.html#what-is-service
-services:
-  - docker:dind
-
 stages:
   - dependencies
   - build
@@ -55,8 +52,10 @@ variables:
   CONTAINER_RELEASE_IMAGE: registry.example.com/my-group/my-project/my-image:latest
   
 docker_build:
-  image: docker:latest
   stage: docker
+  image: docker:latest
+  services:
+    - docker:dind
   dependencies:
     - npm_build
   before_script:
