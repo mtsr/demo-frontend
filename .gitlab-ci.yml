@@ -3,6 +3,12 @@
 # https://hub.docker.com/r/library/node/tags/
 image: node:6
 
+variables:
+  CONTAINER_TEST_IMAGE: registry.kubernetes.knmi.nl/matser/demo-frontend/demo-frontend:$CI_COMMIT_REF_NAME
+  CONTAINER_RELEASE_IMAGE: registry.example.com/my-group/my-project/my-image:latest
+  DOCKER_HOST: tcp://localhost:2375
+  DOCKER_OPTS: --insecure-registry=gitlab-registry.kubernetes.knmi.nl
+  
 # Pick zero or more services to be used on all builds.
 # Only needed when using a docker container to run your tests in.
 # Check out: http://docs.gitlab.com/ce/ci/docker/using_docker_images.html#what-is-service
@@ -18,7 +24,7 @@ docker_test:
   stage: docker_test
   image: docker:latest
   services:
-    - jonasknmi/insecure-dind:latest
+    - lordgaav/dind-options:latest
   before_script:
     - docker info
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
@@ -61,11 +67,6 @@ run_test:
     paths:
       - coverage/
 
-variables:
-  CONTAINER_TEST_IMAGE: registry.kubernetes.knmi.nl/matser/demo-frontend/demo-frontend:$CI_COMMIT_REF_NAME
-  CONTAINER_RELEASE_IMAGE: registry.example.com/my-group/my-project/my-image:latest
-  DOCKER_HOST: tcp://localhost:2375
-  
 docker_build:
   stage: docker
   image: docker:latest
