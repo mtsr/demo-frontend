@@ -10,13 +10,13 @@ services:
   - docker:dind
 
 stages:
-  - prebuild
-  - build
+  - dependencies
   - test
+  - build
   - deploy
   
 npm_install:
-  stage: prebuild
+  stage: dependencies
   cache:
     paths:
       - node_modules/
