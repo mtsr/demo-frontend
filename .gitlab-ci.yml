@@ -76,7 +76,7 @@ docker_build:
     - npm_build
   before_script:
     - docker info
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN http://gitlab-registry.kubernetes.knmi.nl
   script:
     - docker build -t $CONTAINER_TEST_IMAGE .
     - docker push $CONTAINER_TEST_IMAGE
