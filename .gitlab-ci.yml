@@ -18,7 +18,7 @@ docker_test:
   stage: docker_test
   image: docker:latest
   services:
-    - docker:dind
+    - jonasknmi/insecure-dind:latest
   before_script:
     - docker info
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
