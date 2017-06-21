@@ -15,6 +15,7 @@ stages:
   - deploy
 
 test_docker:
+  image: docker:latest
   stage: test_docker
   script:
     - docker info
