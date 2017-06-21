@@ -15,7 +15,7 @@ stages:
   - deploy
 
 docker_test:
-  stage: docker
+  stage: docker_test
   image: docker:latest
   services:
     - docker:dind
