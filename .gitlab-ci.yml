@@ -13,10 +13,6 @@ services:
 
 # This folder is cached between builds
 # http://docs.gitlab.com/ce/ci/yaml/README.html#cache
-cache:
-  paths:
-    - node_modules/
-  
 stages:
   - prebuild
   - build
@@ -25,6 +21,9 @@ stages:
   
 npm_install:
   stage: prebuild
+  cache:
+    paths:
+      - node_modules/
   script:
     - npm install yarn
     - yarn install
