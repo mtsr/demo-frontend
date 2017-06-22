@@ -4,7 +4,7 @@
 image: node:6
 
 variables:
-  CONTAINER_TEST_IMAGE: gitlab-registry.kubernetes.knmi.nl/matser/demo-frontend/demo-frontend:$CI_BUILD_REF_NAME
+  CONTAINER_TEST_IMAGE: gitlab-registry.kubernetes.knmi.nl/matser/demo-frontend/demo-frontend:$CI_COMMIT_REF_NAME
   CONTAINER_RELEASE_IMAGE: gitlab-registry.example.com/my-group/my-project/my-image:latest
   DOCKER_HOST: tcp://localhost:2375
   DOCKER_OPTS: --insecure-registry=gitlab-registry.kubernetes.knmi.nl
@@ -13,7 +13,6 @@ variables:
 # Only needed when using a docker container to run your tests in.
 # Check out: http://docs.gitlab.com/ce/ci/docker/using_docker_images.html#what-is-service
 stages:
-  - deploy_test
   - dependencies
   - build
   - test
@@ -68,6 +67,25 @@ docker_build:
     - docker build -t $CONTAINER_TEST_IMAGE .
     - docker push $CONTAINER_TEST_IMAGE
 
+deploy_review:
+  stage: deploy
+  image: jonasknmi/envsubst-kubectl:1.6.4
+  dependencies:
+    - docker_build
+  variables:
+    CONTAINER_IMAGE_URL: $CI_REGISTRY_IMAGE/demo-frontend:$CI_COMMIT_REF_NAME
+  environment:
+    name: review/$CI_COMMIT_REF_NAME
+    url: http://$CI_ENVIRONMENT_SLUG.demo-review.kubernetes.knmi.nl
+  script:
+    - env
+    - cat deployment.yaml | envsubst > deployment-env.yaml
+    - kubectl apply -f deployment-env.yaml -n $CI_ENVIRONMENT_SLUG
+  only:
+    - branches
+  except:
+    - master
+
 deploy_staging:
   stage: deploy
   image: jonasknmi/envsubst-kubectl:1.6.4
@@ -75,7 +93,7 @@ deploy_staging:
     - docker_build
   variables:
     ENVIRONMENT_HOSTNAME: demo-staging.kubernetes.knmi.nl
-    CONTAINER_IMAGE_URL: $CI_REGISTRY_IMAGE/demo-frontend:$CI_BUILD_REF_NAME
+    CONTAINER_IMAGE_URL: $CI_REGISTRY_IMAGE/demo-frontend:$CI_COMMIT_REF_NAME
   environment:
     name: staging
     url: http://$ENVIRONMENT_HOSTNAME
@@ -86,12 +104,13 @@ deploy_staging:
   only:
     - master
 
+deploy_production:
   image: jonasknmi/envsubst-kubectl:1.6.4
   dependencies:
     - docker_build
   variables:
     ENVIRONMENT_HOSTNAME: demo.kubernetes.knmi.nl
-    CONTAINER_IMAGE_URL: $CI_REGISTRY_IMAGE/demo-frontend:$CI_BUILD_REF_NAME
+    CONTAINER_IMAGE_URL: $CI_REGISTRY_IMAGE/demo-frontend:$CI_COMMIT_REF_NAME
   environment:
     name: production
     url: http://$ENVIRONMENT_HOSTNAME
