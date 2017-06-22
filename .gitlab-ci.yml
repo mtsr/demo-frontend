@@ -4,8 +4,6 @@
 image: node:6
 
 variables:
-  CONTAINER_TEST_IMAGE: gitlab-registry.kubernetes.knmi.nl/matser/demo-frontend/demo-frontend:$CI_COMMIT_REF_NAME
-  CONTAINER_RELEASE_IMAGE: gitlab-registry.example.com/my-group/my-project/my-image:latest
   DOCKER_HOST: tcp://localhost:2375
   DOCKER_OPTS: --insecure-registry=gitlab-registry.kubernetes.knmi.nl
   
@@ -60,12 +58,14 @@ docker_build:
     - jonasknmi/dind-options:latest
   dependencies:
     - npm_build
+  variables:
+    CONTAINER_IMAGE_URL: $CI_REGISTRY_IMAGE/demo-frontend:$CI_COMMIT_SHA
   before_script:
     - docker info
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
   script:
-    - docker build -t $CONTAINER_TEST_IMAGE .
-    - docker push $CONTAINER_TEST_IMAGE
+    - docker build -t $CONTAINER_IMAGE_URL .
+    - docker push $CONTAINER_IMAGE_URL
 
 deploy_review:
   stage: deploy
@@ -74,7 +74,7 @@ deploy_review:
     - docker_build
   variables:
     ENVIRONMENT_HOSTNAME: $CI_ENVIRONMENT_SLUG.demo-review.kubernetes.knmi.nl
-    CONTAINER_IMAGE_URL: $CI_REGISTRY_IMAGE/demo-frontend:$CI_COMMIT_REF_NAME
+    CONTAINER_IMAGE_URL: $CI_REGISTRY_IMAGE/demo-frontend:$CI_COMMIT_SHA
   environment:
     name: review/$CI_COMMIT_REF_NAME
     url: http://$CI_ENVIRONMENT_SLUG.demo-review.kubernetes.knmi.nl
@@ -106,7 +106,7 @@ deploy_staging:
     - docker_build
   variables:
     ENVIRONMENT_HOSTNAME: demo-staging.kubernetes.knmi.nl
-    CONTAINER_IMAGE_URL: $CI_REGISTRY_IMAGE/demo-frontend:$CI_COMMIT_REF_NAME
+    CONTAINER_IMAGE_URL: $CI_REGISTRY_IMAGE/demo-frontend:$CI_COMMIT_SHA
   environment:
     name: staging
     url: http://$ENVIRONMENT_HOSTNAME
@@ -124,7 +124,7 @@ deploy_production:
     - docker_build
   variables:
     ENVIRONMENT_HOSTNAME: demo.kubernetes.knmi.nl
-    CONTAINER_IMAGE_URL: $CI_REGISTRY_IMAGE/demo-frontend:$CI_COMMIT_REF_NAME
+    CONTAINER_IMAGE_URL: $CI_REGISTRY_IMAGE/demo-frontend:$CI_COMMIT_SHA
   environment:
     name: production
     url: http://$ENVIRONMENT_HOSTNAME
