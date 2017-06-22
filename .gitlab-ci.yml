@@ -69,10 +69,10 @@ docker_build:
     - docker push $CONTAINER_TEST_IMAGE
 
 deploy_staging:
-  stage: deploy_test
+  stage: deploy
   image: jonasknmi/envsubst-kubectl:1.6.4
   dependencies:
-    # - docker_build
+    - docker_build
   variables:
     ENVIRONMENT_HOSTNAME: demo-staging.kubernetes.knmi.nl
     CONTAINER_IMAGE_URL: $CI_REGISTRY_IMAGE/demo-frontend:$CI_BUILD_REF_NAME
@@ -86,14 +86,19 @@ deploy_staging:
   only:
     - master
 
-deploy_production:
-  stage: deploy
+  image: jonasknmi/envsubst-kubectl:1.6.4
   dependencies:
-    - npm_build
+    - docker_build
+  variables:
+    ENVIRONMENT_HOSTNAME: demo.kubernetes.knmi.nl
+    CONTAINER_IMAGE_URL: $CI_REGISTRY_IMAGE/demo-frontend:$CI_BUILD_REF_NAME
   environment:
-    name: Production
+    name: production
+    url: http://$ENVIRONMENT_HOSTNAME
   script:
-    - find build
+    - env
+    - cat deployment.yaml | envsubst > deployment-env.yaml
+    - kubectl apply -f deployment-env.yaml -n $CI_ENVIRONMENT_SLUG
   when: manual
   only:
     - master
