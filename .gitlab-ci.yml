@@ -78,6 +78,7 @@ deploy_review:
   environment:
     name: review/$CI_COMMIT_REF_NAME
     url: http://$CI_ENVIRONMENT_SLUG.demo-review.kubernetes.knmi.nl
+    on_stop: stop_review
   script:
     - env
     - cat deployment.yaml | envsubst > deployment-env.yaml
@@ -86,6 +87,17 @@ deploy_review:
     - branches
   except:
     - master
+
+stop_review:
+  stage: deploy
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - kubectl delete namespace $CI_ENVIRONMENT_SLUG
+  when: manual
+  environment:
+    name: review/$CI_COMMIT_REF_NAME
+    action: stop
 
 deploy_staging:
   stage: deploy
