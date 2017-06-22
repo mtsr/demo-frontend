@@ -75,6 +75,7 @@ deploy_staging:
     # - docker_build
   environment:
     name: staging
+    url: http://demo-staging.kubernetes.knmi.nl
   script:
     - env
     - cat deployment.yaml | envsubst > deployment-env.yaml
