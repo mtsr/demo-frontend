@@ -76,6 +76,7 @@ deploy_staging:
   environment:
     name: Staging
   script:
+    - env
     - cat deployment.yaml | envsubst > deployment-env.yaml
     - kubectl apply -f deployment-env.yaml -n $CI_ENVIRONMENT_SLUG
   only:
