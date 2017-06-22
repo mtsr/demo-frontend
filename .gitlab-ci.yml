@@ -71,8 +71,24 @@ deploy_staging:
   stage: deploy
   dependencies:
     - npm_build
+  environment:
+    name: Staging
   script:
     - find build
+  only:
+    - master
+
+deploy_production:
+  stage: deploy
+  dependencies:
+    - npm_build
+  environment:
+    name: Production
+  script:
+    - find build
+  when: manual
+  only:
+    - master
    
 pages:
   stage: deploy
