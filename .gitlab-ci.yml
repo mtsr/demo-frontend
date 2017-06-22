@@ -75,6 +75,7 @@ deploy_staging:
     # - docker_build
   variables:
     ENVIRONMENT_HOSTNAME: demo-staging.kubernetes.knmi.nl
+    CONTAINER_IMAGE_URL: $CI_REGISTRY_IMAGE/demo-frontend:$CI_BUILD_REF_NAME
   environment:
     name: staging
     url: http://$ENVIRONMENT_HOSTNAME

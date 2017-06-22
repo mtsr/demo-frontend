@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
       - name: demo-frontend
-        image: demo-frontend:$CI_BUILD_REF_NAME
+        image: $CONTAINER_IMAGE_URL
         ports:
         - containerPort: 80
 ---
