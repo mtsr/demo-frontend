@@ -51,7 +51,7 @@ metadata:
     build_id: "$CI_BUILD_ID"
 spec:
   rules:
-  - host: $CI_ENVIRONMENT_HOSTNAME
+  - host: $ENVIRONMENT_HOSTNAME
     http:
       paths:
       - path: /

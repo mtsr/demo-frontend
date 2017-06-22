@@ -73,9 +73,11 @@ deploy_staging:
   image: jonasknmi/envsubst-kubectl:1.6.4
   dependencies:
     # - docker_build
+  variables:
+    ENVIRONMENT_HOSTNAME: http://demo-staging.kubernetes.knmi.nl
   environment:
     name: staging
-    url: http://demo-staging.kubernetes.knmi.nl
+    url: $ENVIRONMENT_HOSTNAME
   script:
     - env
     - cat deployment.yaml | envsubst > deployment-env.yaml
