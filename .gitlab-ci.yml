@@ -105,6 +105,7 @@ deploy_staging:
     - master
 
 deploy_production:
+  stage: deploy
   image: jonasknmi/envsubst-kubectl:1.6.4
   dependencies:
     - docker_build
