@@ -1,12 +1,13 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: $CI_ENVIRONMENT_NAME
+  name: $CI_ENVIRONMENT_SLUG
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: $CI_ENVIRONMENT_SLUG
+  namespace: $CI_ENVIRONMENT_SLUG
   labels:
     app: $CI_ENVIRONMENT_SLUG
     track: stable
@@ -28,6 +29,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: $CI_ENVIRONMENT_SLUG
+  namespace: $CI_ENVIRONMENT_SLUG
   labels:
     app: $CI_ENVIRONMENT_SLUG
 spec:
@@ -42,6 +44,7 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: $CI_ENVIRONMENT_SLUG
+  namespace: $CI_ENVIRONMENT_SLUG
   labels:
     app: $CI_ENVIRONMENT_SLUG
     pipeline_id: "$CI_PIPELINE_ID"
