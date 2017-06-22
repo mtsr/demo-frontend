@@ -74,10 +74,10 @@ deploy_staging:
   dependencies:
     # - docker_build
   variables:
-    ENVIRONMENT_HOSTNAME: http://demo-staging.kubernetes.knmi.nl
+    ENVIRONMENT_HOSTNAME: demo-staging.kubernetes.knmi.nl
   environment:
     name: staging
-    url: $ENVIRONMENT_HOSTNAME
+    url: http://$ENVIRONMENT_HOSTNAME
   script:
     - env
     - cat deployment.yaml | envsubst > deployment-env.yaml
