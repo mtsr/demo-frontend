@@ -70,6 +70,7 @@ docker_build:
 
 deploy_staging:
   stage: deploy_test
+  image: jonasknmi/envsubst-kubectl:1.6.4
   dependencies:
     # - docker_build
   environment:
