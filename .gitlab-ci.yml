@@ -74,7 +74,7 @@ deploy_staging:
   dependencies:
     # - docker_build
   environment:
-    name: Staging
+    name: staging
   script:
     - env
     - cat deployment.yaml | envsubst > deployment-env.yaml
