@@ -73,6 +73,7 @@ deploy_review:
   dependencies:
     - docker_build
   variables:
+    ENVIRONMENT_HOSTNAME: $CI_ENVIRONMENT_SLUG.demo-review.kubernetes.knmi.nl
     CONTAINER_IMAGE_URL: $CI_REGISTRY_IMAGE/demo-frontend:$CI_COMMIT_REF_NAME
   environment:
     name: review/$CI_COMMIT_REF_NAME
