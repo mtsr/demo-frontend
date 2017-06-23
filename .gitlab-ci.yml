@@ -90,6 +90,7 @@ deploy_review:
 
 stop_review:
   stage: deploy
+  image: jonasknmi/envsubst-kubectl:1.6.4
   variables:
     GIT_STRATEGY: none
   script:
@@ -98,6 +99,10 @@ stop_review:
   environment:
     name: review/$CI_COMMIT_REF_NAME
     action: stop
+  only:
+    - branches
+  except:
+    - master
 
 deploy_staging:
   stage: deploy
