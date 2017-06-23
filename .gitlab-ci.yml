@@ -4,10 +4,9 @@
 image: node:6
 
 variables:
-  CONTAINER_TEST_IMAGE: gitlab-registry.kubernetes.knmi.nl/matser/demo-frontend/demo-frontend:$CI_COMMIT_REF_NAME
-  CONTAINER_RELEASE_IMAGE: gitlab-registry.example.com/my-group/my-project/my-image:latest
   DOCKER_HOST: tcp://localhost:2375
   DOCKER_OPTS: --insecure-registry=gitlab-registry.kubernetes.knmi.nl
+  IMAGE_PULL_POLICY: IfNotPresent
   
 # Pick zero or more services to be used on all builds.
 # Only needed when using a docker container to run your tests in.
@@ -53,6 +52,22 @@ run_test:
     paths:
       - coverage/
 
+docker_build_review:
+  stage: docker
+  image: docker:latest
+  services:
+    - jonasknmi/dind-options:latest
+  dependencies:
+    - npm_build
+  variables:
+    CONTAINER_IMAGE_URL: $CI_REGISTRY_IMAGE/demo-frontend:$CI_COMMIT_REF_NAME
+  before_script:
+    - docker info
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+  script:
+    - docker build -t $CONTAINER_IMAGE_URL .
+    - docker push $CONTAINER_IMAGE_URL
+
 docker_build:
   stage: docker
   image: docker:latest
@@ -60,12 +75,15 @@ docker_build:
     - jonasknmi/dind-options:latest
   dependencies:
     - npm_build
+  variables:
+    CONTAINER_IMAGE_URL: $CI_REGISTRY_IMAGE/demo-frontend:$CI_COMMIT_SHA
+    IMAGE_PULL_POLICY: Always
   before_script:
     - docker info
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
   script:
-    - docker build -t $CONTAINER_TEST_IMAGE .
-    - docker push $CONTAINER_TEST_IMAGE
+    - docker build -t $CONTAINER_IMAGE_URL .
+    - docker push $CONTAINER_IMAGE_URL
 
 deploy_review:
   stage: deploy
@@ -111,7 +129,7 @@ deploy_staging:
     - docker_build
   variables:
     ENVIRONMENT_HOSTNAME: demo-staging.kubernetes.knmi.nl
-    CONTAINER_IMAGE_URL: $CI_REGISTRY_IMAGE/demo-frontend:$CI_COMMIT_REF_NAME
+    CONTAINER_IMAGE_URL: $CI_REGISTRY_IMAGE/demo-frontend:$CI_COMMIT_SHA
   environment:
     name: staging
     url: http://$ENVIRONMENT_HOSTNAME
@@ -129,7 +147,7 @@ deploy_production:
     - docker_build
   variables:
     ENVIRONMENT_HOSTNAME: demo.kubernetes.knmi.nl
-    CONTAINER_IMAGE_URL: $CI_REGISTRY_IMAGE/demo-frontend:$CI_COMMIT_REF_NAME
+    CONTAINER_IMAGE_URL: $CI_REGISTRY_IMAGE/demo-frontend:$CI_COMMIT_SHA
   environment:
     name: production
     url: http://$ENVIRONMENT_HOSTNAME
