@@ -13,8 +13,7 @@ variables:
 # Check out: http://docs.gitlab.com/ce/ci/docker/using_docker_images.html#what-is-service
 stages:
   - dependencies
-  - build
-  - test
+  - build_and_test
   - docker
   - deploy
 
@@ -32,7 +31,7 @@ npm_install:
     expire_in: 20 minutes
 
 npm_build:
-  stage: build
+  stage: build_and_test
   dependencies:
     - npm_install
   script:
@@ -42,7 +41,7 @@ npm_build:
       - build/
    
 run_test:
-  stage: test
+  stage: build_and_test
   dependencies:
     - npm_install
   script:
