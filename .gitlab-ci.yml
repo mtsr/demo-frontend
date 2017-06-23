@@ -17,13 +17,12 @@ stages:
   - docker
   - deploy
 
-npm_install:
+yarn_install:
   stage: dependencies
   cache:
     paths:
       - node_modules/
   script:
-    - npm install yarn
     - yarn install
   artifacts:
     paths:
@@ -33,18 +32,20 @@ npm_install:
 npm_build:
   stage: build_and_test
   dependencies:
-    - npm_install
+    - yarn_install
   script:
+    - yarn install
     - npm run build
   artifacts:
     paths:
       - build/
    
-run_test:
+npm_test:
   stage: build_and_test
   dependencies:
-    - npm_install
+    - yarn_install
   script:
+    - yarn install
     - npm test
   coverage: /^All files *\|[^|]*\|[^|]*\|[^|]*\| *(\d+.\d+)|/
   artifacts:
@@ -66,6 +67,10 @@ docker_build_review:
   script:
     - docker build -t $CONTAINER_IMAGE_URL .
     - docker push $CONTAINER_IMAGE_URL
+  only: 
+    - branches
+  except:
+    - master
 
 docker_build:
   stage: docker
@@ -161,7 +166,7 @@ deploy_production:
 pages:
   stage: deploy
   dependencies:
-    - run_test
+    - npm_test
   script:
     - mv coverage/ public/
   artifacts:
