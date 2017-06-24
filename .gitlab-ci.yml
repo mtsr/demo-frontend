@@ -23,7 +23,7 @@ yarn_install:
     paths:
       - node_modules/
   script:
-    - yarn install
+    - if [ ! -d node_modules ]; then yarn install; fi
   artifacts:
     paths:
       - node_modules/
@@ -34,7 +34,7 @@ npm_build:
   dependencies:
     - yarn_install
   script:
-    - yarn install
+    - if [ ! -d node_modules ]; then yarn install; fi
     - npm run build
   artifacts:
     paths:
@@ -45,7 +45,7 @@ npm_test:
   dependencies:
     - yarn_install
   script:
-    - yarn install
+    - if [ ! -d node_modules ]; then yarn install; fi
     - npm test
   coverage: /^All files *\|[^|]*\|[^|]*\|[^|]*\| *(\d+.\d+)|/
   artifacts:
