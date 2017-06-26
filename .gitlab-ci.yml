@@ -23,7 +23,7 @@ yarn_install:
     paths:
       - node_modules/
   script:
-    - if [ ! -d node_modules ]; then yarn install; fi
+    - yarn install
   artifacts:
     paths:
       - node_modules/
