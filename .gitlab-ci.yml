@@ -74,6 +74,7 @@ docker_build_review:
   dependencies:
     - npm_build
   variables:
+    DOCKER_DRIVER: overlay
     CONTAINER_IMAGE_URL: $CI_REGISTRY_IMAGE/demo-frontend:$CI_COMMIT_REF_NAME
   before_script:
     - docker info
@@ -94,6 +95,7 @@ docker_build:
   dependencies:
     - npm_build
   variables:
+    DOCKER_DRIVER: overlay
     CONTAINER_IMAGE_URL: $CI_REGISTRY_IMAGE/demo-frontend:$CI_COMMIT_SHA
     IMAGE_PULL_POLICY: Always
   before_script:
