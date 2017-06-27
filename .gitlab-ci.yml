@@ -103,8 +103,6 @@ docker_build:
     - docker build -t $CONTAINER_IMAGE_URL .
     - docker push $CONTAINER_IMAGE_URL
   only:
-    - branches
-  except:
     - master
 
 deploy_review:
